@@ -43,6 +43,7 @@ jobs:
     - name: Workaround missing .version file
       run: |
         git fetch --tags || true
+        git tag v0.0.0 || true
         echo "0.0.0" > .version
 
     - name: Initialize CodeQL
