@@ -57,8 +57,8 @@ jobs:
         BOOST_VERSION=1.87.0
         BOOST_DIR=boost_1_87_0
         # Use GitHub Boost release tarball:
-        wget https://github.com/boostorg/boost/releases/download/boost-${BOOST_VERSION}/boost-${BOOST_VERSION}.tar.gz -O ${BOOST_DIR}.tar.gz
-        tar -xzf ${BOOST_DIR}.tar.gz
+        wget https://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/${BOOST_DIR}.tar.gz
+        tar -xvzf ${BOOST_DIR}.tar.gz
         cd ${BOOST_DIR}
         ./bootstrap.sh
         ./b2 -j$(nproc) --with=all
