@@ -40,27 +40,33 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
-        # queries: security-extended,security-and-quality
 
-    # Manual build steps for CMake + Protobuf projects
     - if: matrix.build-mode == 'manual'
       shell: bash
       run: |
+        # Install dependencies
         sudo apt-get update
-        sudo apt-get install -y cmake build-essential protobuf-compiler libprotobuf-dev
+        sudo apt-get install -y wget tar build-essential cmake
 
-        cmake --version
-        protoc --version
+        # Install Boost 1.87
+        BOOST_VERSION=1.87.0
+        BOOST_DIR=boost_1_87_0
+        wget https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/${BOOST_DIR}.tar.gz
+        tar -xzf ${BOOST_DIR}.tar.gz
+        cd ${BOOST_DIR}
+        ./bootstrap.sh
+        ./b2 -j$(nproc) --with=all
+        cd ..
 
+        # Build your project
         mkdir build
         cd build
-        cmake ..
+        cmake .. -DBOOST_ROOT=$GITHUB_WORKSPACE/${BOOST_DIR}
         make -j$(nproc)
 
     - name: Perform CodeQL Analysis
